@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GDM临床决策支持系统 — 专家评估</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #4f46e5;
+  --primary-light: #eef2ff;
+  --primary-lighter: #f5f7ff;
+  --primary-dark: #3730a3;
+  --primary-glow: rgba(79, 70, 229, 0.15);
+  --bg: #f8f9fc;
+  --card: #ffffff;
+  --text: #1e1e2e;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --green: #059669;
+  --green-bg: #ecfdf5;
+  --green-border: #10b981;
+  --green-glow: rgba(16, 185, 129, 0.2);
+  --yellow: #d97706;
+  --yellow-bg: #fffbeb;
+  --yellow-border: #f59e0b;
+  --yellow-glow: rgba(245, 158, 11, 0.2);
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #ef4444;
+  --red-glow: rgba(239, 68, 68, 0.2);
+  --gray: #64748b;
+  --gray-bg: #f1f5f9;
+  --gray-border: #94a3b8;
+  --gray-glow: rgba(148, 163, 184, 0.2);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-top: 0 -4px 16px rgba(0,0,0,0.06);
+  --transition-fast: 0.15s ease;
+  --transition: 0.25s ease;
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  padding-bottom: 110px;
+}
+
+@media (min-width: 480px) {
+  .container { padding: 24px 24px 110px; }
+}
+
+/* ===== Screen transitions ===== */
+.screen { display: none; }
+.screen.active {
+  display: block;
+  animation: screenFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Header bar ===== */
+.top-bar {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 15px 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(79, 70, 229, 0.2);
+}
+
+/* ===== Welcome screen ===== */
+.welcome-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 36px 28px;
+  margin-top: 28px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+}
+
+.welcome-card h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.welcome-card .subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+
+.welcome-card .desc {
+  font-size: 0.9rem;
+  color: #475569;
+  text-align: left;
+  margin-bottom: 28px;
+  line-height: 1.75;
+  background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--primary-light) 100%);
+  padding: 18px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(79, 70, 229, 0.08);
+}
+
+.input-group {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  background: var(--bg);
+}
+
+.input-group input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  background: white;
+}
+
+.input-group input::placeholder {
+  color: #a0aec0;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+  min-height: 48px;
+  touch-action: manipulation;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active { transform: translateY(0) scale(0.98); }
+
+.btn-primary:disabled {
+  background: linear-gradient(135deg, #a5b4fc 0%, #93a3f8 100%);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-lighter);
+  box-shadow: var(--shadow);
+}
+
+.btn-full { width: 100%; }
+
+/* ===== Progress bar ===== */
+.progress-section {
+  margin-bottom: 20px;
+}
+
+.progress-label {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.progress-bar-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, #7c3aed 60%, #a855f7 100%);
+  border-radius: 3px;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+  animation: progressShimmer 2s ease-in-out infinite;
+}
+
+@keyframes progressShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===== Query card ===== */
+.query-card {
+  background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--primary-light) 100%);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(79, 70, 229, 0.1);
+}
+
+.query-card .query-type-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: white;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-1hop { background: linear-gradient(135deg, #059669, #047857); }
+.badge-3hop { background: linear-gradient(135deg, #d97706, #b45309); }
+.badge-5hop { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+
+.query-card .query-text {
+  font-size: 0.94rem;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ===== Criteria panel (elegant accordion) ===== */
+.criteria-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: box-shadow var(--transition);
+}
+
+.criteria-panel:hover {
+  box-shadow: var(--shadow);
+}
+
+.criteria-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  touch-action: manipulation;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+}
+
+.criteria-toggle:hover {
+  color: var(--primary);
+}
+
+.criteria-toggle .arrow {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.criteria-toggle.open .arrow {
+  transform: rotate(180deg);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.criteria-body {
+  display: none;
+  padding: 0 18px 16px;
+}
+
+.criteria-body.open {
+  display: block;
+  animation: criteriaSlideDown 0.3s ease both;
+}
+
+@keyframes criteriaSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.criteria-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.criteria-item:last-child { margin-bottom: 0; }
+
+.criteria-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* ===== Claim card ===== */
+.claim-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+  border-left: 4px solid var(--border);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  animation: claimSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  border-top: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.claim-card:nth-child(1) { animation-delay: 0.05s; }
+.claim-card:nth-child(2) { animation-delay: 0.1s; }
+.claim-card:nth-child(3) { animation-delay: 0.15s; }
+.claim-card:nth-child(4) { animation-delay: 0.2s; }
+.claim-card:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes claimSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.claim-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.claim-card.rated-correct { border-left-color: var(--green-border); }
+.claim-card.rated-partially_correct { border-left-color: var(--yellow-border); }
+.claim-card.rated-incorrect { border-left-color: var(--red-border); }
+.claim-card.rated-unverifiable { border-left-color: var(--gray-border); }
+
+.claim-header {
+  padding: 16px 18px 10px;
+}
+
+.claim-id {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.claim-text {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.claim-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 10px 18px 16px;
+}
+
+.rating-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  touch-action: manipulation;
+  color: var(--text);
+  position: relative;
+}
+
+.rating-btn .icon { font-size: 1rem; }
+
+.rating-btn:hover {
+  border-color: #cbd5e1;
+  background: #fafbfc;
+}
+
+.rating-btn:active { transform: scale(0.96); }
+
+/* Rating button selected states with glow */
+.rating-btn.sel-correct {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+  color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-glow), var(--shadow-xs);
+}
+
+.rating-btn.sel-partially_correct {
+  background: var(--yellow-bg);
+  border-color: var(--yellow-border);
+  color: var(--yellow);
+  box-shadow: 0 0 0 3px var(--yellow-glow), var(--shadow-xs);
+}
+
+.rating-btn.sel-incorrect {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  color: var(--red);
+  box-shadow: 0 0 0 3px var(--red-glow), var(--shadow-xs);
+}
+
+.rating-btn.sel-unverifiable {
+  background: var(--gray-bg);
+  border-color: var(--gray-border);
+  color: var(--gray);
+  box-shadow: 0 0 0 3px var(--gray-glow), var(--shadow-xs);
+}
+
+/* ===== Navigation bar ===== */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-top);
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  z-index: 100;
+}
+
+.nav-bar .btn {
+  flex: 1;
+  max-width: 300px;
+  border-radius: 12px;
+}
+
+/* ===== Calibration screen ===== */
+.calibration-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-light);
+}
+
+.calibration-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 14px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.calibration-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+.cal-example {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--border);
+  transition: transform var(--transition-fast);
+}
+
+.cal-example:hover {
+  transform: translateX(2px);
+}
+
+.cal-example.cal-correct { border-left-color: var(--green-border); }
+.cal-example.cal-partial { border-left-color: var(--yellow-border); }
+.cal-example.cal-unverifiable { border-left-color: var(--gray-border); }
+
+.cal-example .cal-claim {
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.cal-example .cal-verdict {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.cal-example .cal-reason {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+/* ===== Completion screen ===== */
+.completion-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 36px 24px;
+  margin-top: 28px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+}
+
+.completion-card .check-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  display: inline-block;
+  animation: checkBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes checkBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(3deg);
+  }
+  70% {
+    transform: scale(0.95) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.completion-card h2 {
+  font-size: 1.35rem;
+  color: var(--primary);
+  margin-bottom: 10px;
+  font-weight: 700;
+  animation: textFadeUp 0.5s ease 0.4s both;
+}
+
+.completion-card .msg {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  animation: textFadeUp 0.5s ease 0.5s both;
+}
+
+@keyframes textFadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+  animation: textFadeUp 0.5s ease 0.6s both;
+}
+
+.summary-table th, .summary-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.summary-table th {
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.summary-table td:last-child {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.summary-table tbody tr:hover {
+  background: var(--bg);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  animation: textFadeUp 0.5s ease 0.7s both;
+}
+
+.action-buttons .btn { width: 100%; }
+
+.instructions-note {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--primary-light) 100%);
+  border-radius: 10px;
+  line-height: 1.65;
+  border: 1px solid rgba(79, 70, 229, 0.08);
+  animation: textFadeUp 0.5s ease 0.8s both;
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 88px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: #1e293b;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== Subtle selection state ===== */
+::selection {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+/* ===== Scrollbar styling (webkit) ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ===== Bilingual display styles ===== */
+.query-zh { font-size: 1.05em; font-weight: 500; margin-bottom: 6px; line-height: 1.6; }
+.query-en { font-size: 0.82em; color: #94a3b8; line-height: 1.5; }
+.claim-zh { font-size: 0.95em; line-height: 1.65; margin-bottom: 4px; }
+.claim-en { font-size: 0.78em; color: #94a3b8; line-height: 1.5; padding-left: 8px; border-left: 2px solid #e2e8f0; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">GDM临床决策支持系统 — 专家评估</div>
+
+<!-- ========== WELCOME SCREEN ========== -->
+<div class="screen active" id="screen-welcome">
+  <div class="container">
+    <div class="welcome-card">
+      <h1>GDM临床决策支持系统</h1>
+      <p class="subtitle">临床陈述准确性验证</p>
+      <div class="desc">
+        我们从两个AI系统的回答中提取了临床陈述，请您逐条判断其准确性。每个问题包含4-5条陈述，共15个问题，约10-15分钟可完成。
+      </div>
+      <div class="input-group">
+        <label for="evaluator-name">评估者姓名 *</label>
+        <input type="text" id="evaluator-name" placeholder="请输入您的姓名" autocomplete="name">
+      </div>
+      <button class="btn btn-primary btn-full" id="btn-start" disabled>开始评估</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CALIBRATION SCREEN ========== -->
+<div class="screen" id="screen-calibration">
+  <div class="container">
+    <div class="calibration-card">
+      <h2>评分校准示例</h2>
+      <p>在正式评估前，请先了解四种评分的含义。以下是三条示例陈述及其评分：</p>
+
+      <div class="cal-example cal-correct">
+        <div class="cal-claim">
+          <div class="claim-zh">"ADA 2024指南建议GDM患者空腹血糖目标&lt;95 mg/dL (5.3 mmol/L)"</div>
+          <div class="claim-en">"ADA 2024 guidelines recommend fasting glucose target &lt;95 mg/dL (5.3 mmol/L) for GDM"</div>
+        </div>
+        <div class="cal-verdict" style="color:var(--green);">&#10003; 正确</div>
+        <div class="cal-reason">具体、可验证的指南目标值，与ADA 2024一致</div>
+      </div>
+
+      <div class="cal-example cal-partial">
+        <div class="cal-claim">
+          <div class="claim-zh">"研究表明PM2.5可通过炎症通路导致甘油三酯升高"</div>
+          <div class="claim-en">"Studies suggest PM2.5 can elevate triglycerides through inflammatory pathways"</div>
+        </div>
+        <div class="cal-verdict" style="color:var(--yellow);">&#9651; 部分正确</div>
+        <div class="cal-reason">机制方向合理，但过于简化，缺乏细节</div>
+      </div>
+
+      <div class="cal-example cal-unverifiable">
+        <div class="cal-claim">
+          <div class="claim-zh">"《美国心脏协会杂志》(JAHA)发表的研究证实短期PM2.5暴露与甘油三酯升高相关"</div>
+          <div class="claim-en">"A study in JAHA found short-term PM2.5 exposure linked to elevated triglycerides"</div>
+        </div>
+        <div class="cal-verdict" style="color:var(--gray);">? 无法验证</div>
+        <div class="cal-reason">引用了具体期刊但在当前上下文中无法核实来源</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="btn-start-eval">我已了解，开始评估</button>
+  </div>
+</div>
+
+<!-- ========== QUESTION SCREEN ========== -->
+<div class="screen" id="screen-question">
+  <div class="container">
+    <div class="progress-section">
+      <div class="progress-label" id="progress-label">问题 1/15</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill" style="width:6.67%"></div>
+      </div>
+    </div>
+
+    <!-- Criteria panel -->
+    <div class="criteria-panel">
+      <button class="criteria-toggle" id="criteria-toggle" type="button">
+        <span>评分标准</span>
+        <span class="arrow">&#9660;</span>
+      </button>
+      <div class="criteria-body" id="criteria-body">
+        <div class="criteria-item">
+          <div class="criteria-dot" style="background:var(--green)"></div>
+          <div><strong>正确:</strong> 事实准确，符合当前临床指南和实践</div>
+        </div>
+        <div class="criteria-item">
+          <div class="criteria-dot" style="background:var(--yellow)"></div>
+          <div><strong>部分正确:</strong> 方向正确但不够精确或有遗漏</div>
+        </div>
+        <div class="criteria-item">
+          <div class="criteria-dot" style="background:var(--red)"></div>
+          <div><strong>不正确:</strong> 包含事实性错误</div>
+        </div>
+        <div class="criteria-item">
+          <div class="criteria-dot" style="background:var(--gray)"></div>
+          <div><strong>无法验证:</strong> 听起来合理但无法从已知证据确认（如引用了具体研究但无法核实来源）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Query card -->
+    <div class="query-card" id="query-card">
+      <span class="query-type-badge" id="query-badge"></span>
+      <div class="query-text" id="query-text"></div>
+    </div>
+
+    <!-- Claims container -->
+    <div id="claims-container"></div>
+  </div>
+
+  <!-- Nav bar -->
+  <div class="nav-bar">
+    <button class="btn btn-secondary" id="btn-prev">上一题</button>
+    <button class="btn btn-primary" id="btn-next" disabled>下一题</button>
+  </div>
+</div>
+
+<!-- ========== COMPLETION SCREEN ========== -->
+<div class="screen" id="screen-complete">
+  <div class="container">
+    <div class="completion-card">
+      <div class="check-icon">&#10004;&#65039;</div>
+      <h2>评估完成！</h2>
+      <p class="msg">感谢您的专业评估，以下是评分概要：</p>
+
+      <table class="summary-table" id="summary-table">
+        <thead>
+          <tr><th>项目</th><th>数量</th></tr>
+        </thead>
+        <tbody id="summary-body"></tbody>
+      </table>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" id="btn-copy">复制结果</button>
+        <button class="btn btn-secondary" id="btn-download">下载结果</button>
+      </div>
+
+      <div class="instructions-note">
+        请将结果文件发送给研究团队。您可以点击"复制结果"粘贴到消息中，或点击"下载结果"保存JSON文件后发送。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Embedded claims data =====
+const QUESTIONS = [
+  {
+    "eval_id": 1,
+    "query_type": "3-hop",
+    "query": "For patient REAL-27082X living in 江北新区, how does their PM2.5 exposure on visit day correlate with their triglyceride level?",
+    "query_zh": "对于居住在江北新区的患者REAL-27082X，其就诊日PM2.5暴露水平与甘油三酯水平之间存在怎样的相关性？",
+    "claims": [
+      {"claim_id": "Q1-C1", "text": "Monitoring these parameters over time could provide more definitive insights into the relationship for this particular patient", "text_zh": "对该患者进行长期随访监测上述参数，有助于更明确地揭示两者之间的关联"},
+      {"claim_id": "Q1-C2", "text": "While this suggests that comprehensive management can improve lipid profiles, there is no specific data linking PM2.5 exposure to triglyceride levels in the context of gestational diabetes", "text_zh": "尽管综合管理可改善血脂谱，但目前缺乏将PM2.5暴露与妊娠期糖尿病患者甘油三酯水平直接关联的数据"},
+      {"claim_id": "Q1-C3", "text": "A study in the Journal of the American Heart Association found that short-term exposure to PM2.5 was linked to elevated triglycerides and other adverse lipid profiles", "text_zh": "《美国心脏协会杂志》(JAHA)上的一项研究发现，短期PM2.5暴露与甘油三酯升高及其他血脂异常相关"},
+      {"claim_id": "Q1-C4", "text": "Current evidence does not directly address the correlation between PM2.5 exposure and triglyceride levels in patients with gestational diabetes", "text_zh": "现有证据未直接阐述PM2.5暴露与妊娠期糖尿病患者甘油三酯水平之间的相关性"},
+      {"claim_id": "Q1-C5", "text": "A study within the CINEMA Program showed that team-based care for adults with type 2 diabetes led to a reduction in triglycerides by 13.5 mg/dL", "text_zh": "CINEMA项目中的一项研究表明，对2型糖尿病成人实施团队化管理可使甘油三酯降低13.5 mg/dL"}
+    ]
+  },
+  {
+    "eval_id": 2,
+    "query_type": "3-hop",
+    "query": "For patient REAL-201306 living in 鼓楼区, how does their PM2.5 exposure on visit day correlate with their triglyceride level?",
+    "query_zh": "对于居住在鼓楼区的患者REAL-201306，其就诊日PM2.5暴露水平与甘油三酯水平之间存在怎样的相关性？",
+    "claims": [
+      {"claim_id": "Q2-C1", "text": "To establish a specific correlation for this patient, it would be necessary to analyze their individual data, considering both PM2.5 exposure levels and concurrent triglyceride measurements", "text_zh": "若要明确该患者的具体相关性，需结合其个体PM2.5暴露水平和同期甘油三酯检测数据进行分析"},
+      {"claim_id": "Q2-C2", "text": "Studies suggest that short-term exposure to PM2.5 can lead to systemic inflammation and oxidative stress, which may affect lipid metabolism, potentially increasing triglyceride levels", "text_zh": "研究表明，短期PM2.5暴露可引发全身性炎症反应和氧化应激，进而影响脂质代谢，可能导致甘油三酯水平升高"},
+      {"claim_id": "Q2-C3", "text": "Based on available evidence, no direct correlation can be established", "text_zh": "无法建立直接的相关性"},
+      {"claim_id": "Q2-C4", "text": "Available literature focuses on hypoglycemia and its risk factors in diabetic patients, which is not relevant to the specific question about PM2.5 and triglycerides", "text_zh": "现有文献主要关注糖尿病患者的低血糖及其危险因素，与PM2.5和甘油三酯之间关系的具体问题无关"},
+      {"claim_id": "Q2-C5", "text": "Current evidence does not contain information directly linking PM2.5 exposure to triglyceride levels in patients with gestational diabetes", "text_zh": "现有证据中未包含将PM2.5暴露与妊娠期糖尿病患者甘油三酯水平直接关联的信息"}
+    ]
+  },
+  {
+    "eval_id": 3,
+    "query_type": "3-hop",
+    "query": "For patient REAL-012328 in 江北新区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于江北新区的患者REAL-012328，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "claims": [
+      {"claim_id": "Q3-C1", "text": "The district average for such conditions might range from 90-110 mg/dL, depending on local health data", "text_zh": "根据当地卫生数据，该条件下的区域均值可能在90–110 mg/dL之间"},
+      {"claim_id": "Q3-C2", "text": "According to general guidelines, the target fasting glucose level for GDM patients is 80–130 mg/dL (4.4–7.2 mmol/L)", "text_zh": "根据通用指南，妊娠期糖尿病患者的空腹血糖目标值为80–130 mg/dL（4.4–7.2 mmol/L）"},
+      {"claim_id": "Q3-C3", "text": "Typically, in areas with high PM2.5 exposure (>50 µg/m³), GDM patients may exhibit slightly higher fasting glucose levels due to increased systemic inflammation and insulin resistance", "text_zh": "通常在PM2.5暴露较高的地区（>50 µg/m³），由于全身性炎症反应加重和胰岛素抵抗增强，妊娠期糖尿病患者的空腹血糖可能略有升高"},
+      {"claim_id": "Q3-C4", "text": "Current evidence does not include specific data on fasting glucose levels for GDM patients in 江北新区 with PM2.5 > 50 µg/m³", "text_zh": "现有证据未包含江北新区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者空腹血糖的具体数据"},
+      {"claim_id": "Q3-C5", "text": "Without district-specific data, we cannot directly compare patient REAL-012328's fasting glucose to the district average", "text_zh": "在缺乏区域特异性数据的情况下，无法将患者REAL-012328的空腹血糖与区域均值直接比较"}
+    ]
+  },
+  {
+    "eval_id": 4,
+    "query_type": "3-hop",
+    "query": "For patient REAL-073629 in 鼓楼区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于鼓楼区的患者REAL-073629，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "claims": [
+      {"claim_id": "Q4-C1", "text": "The guidelines emphasize achieving these targets safely, adjusting if hypoglycemia is a concern", "text_zh": "指南强调应安全达标，当存在低血糖风险时需适当调整目标值"},
+      {"claim_id": "Q4-C2", "text": "If such data is unavailable, consider using broader regional or national averages as a reference point, while noting the limitations of this approach", "text_zh": "若无此类数据，可考虑使用更大范围的区域或全国均值作为参考，但需注意该方法的局限性"},
+      {"claim_id": "Q4-C3", "text": "Specific district-level data on GDM patients' fasting glucose levels and PM2.5 exposure is not readily available in standard clinical databases or literature", "text_zh": "标准临床数据库或文献中尚无妊娠期糖尿病患者空腹血糖水平与PM2.5暴露的区级数据"},
+      {"claim_id": "Q4-C4", "text": "The specific comparison to the district-average for GDM patients with PM2.5 > 50 µg/m³ is not provided in available evidence", "text_zh": "现有证据中未提供与PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者区域均值的具体比较"}
+    ]
+  },
+  {
+    "eval_id": 5,
+    "query_type": "1-hop",
+    "query": "According to ADA 2024, what is the OGTT target for 1-hour postprandial glucose in GDM?",
+    "query_zh": "根据ADA 2024指南，妊娠期糖尿病OGTT（口服葡萄糖耐量试验）1小时餐后血糖的目标值是多少？",
+    "claims": [
+      {"claim_id": "Q5-C1", "text": "This threshold is used to identify women at higher risk for GDM, who may require further management and monitoring to ensure optimal maternal and fetal outcomes", "text_zh": "该阈值用于识别妊娠期糖尿病高风险女性，以便进一步管理和监测，确保母婴最佳结局"},
+      {"claim_id": "Q5-C2", "text": "For the diagnosis of GDM, the OGTT uses a 75-g glucose load, and the 1-hour postprandial glucose threshold is typically set at 180 mg/dL (10.0 mmol/L) or higher", "text_zh": "在妊娠期糖尿病的诊断中，OGTT（口服葡萄糖耐量试验）采用75 g葡萄糖负荷，1小时餐后血糖阈值通常设定为≥180 mg/dL（10.0 mmol/L）"},
+      {"claim_id": "Q5-C3", "text": "According to the American Diabetes Association (ADA) 2024 guidelines, the 1-hour postprandial glucose target during an Oral Glucose Tolerance Test (OGTT) for diagnosing Gestational Diabetes Mellitus (GDM) is ≥180 mg/dL (10.0 mmol/L)", "text_zh": "根据美国糖尿病协会（ADA）2024指南，用于诊断妊娠期糖尿病（GDM）的OGTT（口服葡萄糖耐量试验）1小时餐后血糖目标值为≥180 mg/dL（10.0 mmol/L）"},
+      {"claim_id": "Q5-C4", "text": "For postpartum screening, the OGTT is recommended over A1C due to its higher sensitivity in detecting glucose intolerance", "text_zh": "在产后筛查中，因OGTT（口服葡萄糖耐量试验）检测糖耐量异常的灵敏度更高，故推荐其优先于糖化血红蛋白（A1C）"},
+      {"claim_id": "Q5-C5", "text": "According to the ADA 2024 guidelines, the specific 1-hour postprandial glucose target for the OGTT in gestational diabetes (GDM) is not directly stated", "text_zh": "根据ADA 2024指南，OGTT（口服葡萄糖耐量试验）中妊娠期糖尿病1小时餐后血糖的具体目标值未被直接明确"}
+    ]
+  },
+  {
+    "eval_id": 6,
+    "query_type": "3-hop",
+    "query": "Patient REAL-129206 has a pre-pregnancy BMI of 24.0. Based on ACOG guidelines, what insulin regimen is recommended if lifestyle changes fail?",
+    "query_zh": "患者REAL-129206孕前BMI为24.0。根据ACOG指南，若生活方式干预无效，推荐何种胰岛素(insulin)治疗方案？",
+    "claims": [
+      {"claim_id": "Q6-C1", "text": "The regimen may require higher doses of insulin, potentially necessitating concentrated insulin formulations", "text_zh": "该方案可能需要较高剂量的胰岛素(insulin)，有时需使用浓缩胰岛素制剂"},
+      {"claim_id": "Q6-C2", "text": "Insulin is the preferred initial medication due to its safety and efficacy", "text_zh": "胰岛素(insulin)因其安全性和有效性，是首选的初始药物"},
+      {"claim_id": "Q6-C3", "text": "The typical starting regimen involves basal insulin (such as NPH or long-acting analogs like glargine) once daily at bedtime or in the morning, with adjustments based on fasting glucose levels", "text_zh": "典型的起始方案为基础胰岛素（如NPH胰岛素或甘精胰岛素等长效类似物），每日一次于睡前或晨起注射，根据空腹血糖水平调整剂量"},
+      {"claim_id": "Q6-C4", "text": "This should be managed by an interprofessional team with relevant expertise, focusing on achieving optimal glycemic control", "text_zh": "应由具备相关专业知识的多学科团队进行管理，以实现最佳血糖控制"},
+      {"claim_id": "Q6-C5", "text": "If postprandial glucose targets are not met, short-acting or rapid-acting insulin can be added before meals", "text_zh": "若餐后血糖未达标，可在餐前加用短效或速效胰岛素(insulin)"}
+    ]
+  },
+  {
+    "eval_id": 7,
+    "query_type": "3-hop",
+    "query": "How do the CGM glucose variability (CV) metrics of patient REAL-302248 compare to the GDM cohort mean for patients in 江北新区?",
+    "query_zh": "患者REAL-302248的CGM（连续血糖监测）血糖变异性CV（变异系数）指标与江北新区妊娠期糖尿病队列均值相比如何？",
+    "claims": [
+      {"claim_id": "Q7-C1", "text": "Current evidence does not include specific CGM glucose variability (CV) metrics for patient REAL-302248 or the GDM cohort mean for patients in 江北新区", "text_zh": "现有证据未包含患者REAL-302248的CGM（连续血糖监测）血糖变异性CV（变异系数）指标或江北新区妊娠期糖尿病队列均值"},
+      {"claim_id": "Q7-C2", "text": "Based on general guidelines, CGM metrics such as mean glucose and glucose management indicator are crucial for managing GDM", "text_zh": "根据通用指南，CGM（连续血糖监测）指标如平均血糖和血糖管理指标对妊娠期糖尿病管理至关重要"},
+      {"claim_id": "Q7-C3", "text": "If REAL-302248's CV is higher than the cohort mean, it suggests greater glucose variability, which may require closer monitoring or adjustment in management strategies", "text_zh": "若REAL-302248的CV（变异系数）高于队列均值，提示其血糖波动较大，可能需要加强监测或调整管理方案"},
+      {"claim_id": "Q7-C4", "text": "A CV below the cohort mean indicates better glucose stability", "text_zh": "CV（变异系数）低于队列均值提示血糖控制更为稳定"},
+      {"claim_id": "Q7-C5", "text": "For a precise comparison, you would need the CV metric for REAL-302248 and the cohort mean from 江北新区", "text_zh": "如需精确比较，需获取REAL-302248的CV（变异系数）数据和江北新区队列均值"}
+    ]
+  },
+  {
+    "eval_id": 8,
+    "query_type": "5-hop",
+    "query": "Perform a multivariable clinical risk assessment for patient REAL-061465 incorporating PM2.5 exposure in 建邺区, pre-pregnancy BMI of 20.2, CGM variability CV, and biochemical lipid panel, then propose an evidence-based intervention per ADA 2024.",
+    "query_zh": "对患者REAL-061465进行多变量临床风险评估，综合考虑建邺区PM2.5暴露、孕前BMI 20.2、CGM（连续血糖监测）变异性CV（变异系数）及生化血脂谱，并依据ADA 2024指南提出循证干预方案。",
+    "claims": [
+      {"claim_id": "Q8-C1", "text": "Monitor air quality and advise on reducing outdoor activities during high pollution days", "text_zh": "监测空气质量，建议在重度污染天气减少户外活动"},
+      {"claim_id": "Q8-C2", "text": "PM2.5 Exposure: Elevated PM2.5 levels can increase insulin resistance and GDM risk", "text_zh": "PM2.5暴露：PM2.5水平升高可加重胰岛素抵抗，增加妊娠期糖尿病风险"},
+      {"claim_id": "Q8-C3", "text": "Pharmacotherapy: If lifestyle changes are insufficient, consider metformin or insulin as per ADA guidelines", "text_zh": "药物治疗：若生活方式干预不足以控制血糖，根据ADA指南可考虑使用二甲双胍(metformin)或胰岛素(insulin)"},
+      {"claim_id": "Q8-C4", "text": "Monitor glucose levels closely, especially after hypoglycemic events, using both CGM and finger sticks", "text_zh": "密切监测血糖水平，尤其在发生低血糖事件后，应联合使用CGM（连续血糖监测）和指尖血糖监测"},
+      {"claim_id": "Q8-C5", "text": "Per ADA 2024, recommend team-based care to manage weight, BMI, blood pressure, and lipid levels, aiming for reductions similar to those seen in the CINEMA program", "text_zh": "根据ADA 2024指南，建议实施团队化管理，综合控制体重、BMI、血压及血脂水平，目标为达到类似CINEMA项目的改善效果"}
+    ]
+  },
+  {
+    "eval_id": 9,
+    "query_type": "5-hop",
+    "query": "Perform a multivariable clinical risk assessment for patient REAL-260482 incorporating PM2.5 exposure in 鼓楼区, pre-pregnancy BMI of 28.9, CGM variability CV, and biochemical lipid panel, then propose an evidence-based intervention per ADA 2024.",
+    "query_zh": "对患者REAL-260482进行多变量临床风险评估，综合考虑鼓楼区PM2.5暴露、孕前BMI 28.9、CGM（连续血糖监测）变异性CV（变异系数）及生化血脂谱，并依据ADA 2024指南提出循证干预方案。",
+    "claims": [
+      {"claim_id": "Q9-C1", "text": "Follow ADA 2024 guidelines for comprehensive management", "text_zh": "遵循ADA 2024指南进行综合管理"},
+      {"claim_id": "Q9-C2", "text": "Biochemical Lipid Panel: Abnormal lipid levels can further exacerbate insulin resistance", "text_zh": "生化血脂谱：血脂异常可进一步加重胰岛素抵抗"},
+      {"claim_id": "Q9-C3", "text": "Recommend lifestyle interventions, including dietary counseling by a registered dietitian nutritionist (RDN), to manage weight and improve insulin sensitivity", "text_zh": "建议进行生活方式干预，包括由注册营养师（RDN）提供膳食指导，以控制体重并改善胰岛素敏感性"},
+      {"claim_id": "Q9-C4", "text": "Pre-Pregnancy BMI: A BMI of 28.9 kg/m² is considered overweight, which is a significant risk factor for GDM", "text_zh": "孕前BMI：BMI 28.9 kg/m²属于超重，是妊娠期糖尿病的重要危险因素"},
+      {"claim_id": "Q9-C5", "text": "Pharmacotherapy: If lifestyle changes are insufficient, consider metformin or insulin therapy as recommended by the ADA", "text_zh": "药物治疗：若生活方式干预效果不佳，可根据ADA建议考虑使用二甲双胍(metformin)或胰岛素(insulin)治疗"}
+    ]
+  },
+  {
+    "eval_id": 10,
+    "query_type": "3-hop",
+    "query": "For patient REAL-244026 in 江宁区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于江宁区的患者REAL-244026，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "claims": [
+      {"claim_id": "Q10-C1", "text": "The guidelines emphasize achieving these targets safely, adjusting for individual risk of hypoglycemia", "text_zh": "指南强调应安全达标，并根据个体低血糖风险进行调整"},
+      {"claim_id": "Q10-C2", "text": "If patient REAL-244026's fasting glucose is above this threshold, they may be at higher risk, especially considering the potential adverse effects of elevated PM2.5 exposure on glucose metabolism", "text_zh": "若患者REAL-244026的空腹血糖超过该阈值，则其风险可能更高，尤其需考虑PM2.5暴露升高对糖代谢的潜在不良影响"},
+      {"claim_id": "Q10-C3", "text": "The specific comparison against the district-average for GDM patients with PM2.5 > 50 µg/m³ is not provided in available evidence", "text_zh": "现有证据中未提供与PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者区域均值的具体比较"},
+      {"claim_id": "Q10-C4", "text": "Typically, the American Diabetes Association (ADA) recommends a fasting plasma glucose level <92 mg/dL (5.1 mmol/L) for diagnosing GDM", "text_zh": "通常，美国糖尿病协会（ADA）推荐以空腹血浆葡萄糖<92 mg/dL（5.1 mmol/L）作为妊娠期糖尿病的诊断标准"}
+    ]
+  },
+  {
+    "eval_id": 11,
+    "query_type": "5-hop",
+    "query": "Compare the CGM MAGE and CV metrics of patient REAL-302821 against the cohort average for GDM patients exposed to >50 µg/m³ PM2.5 in 江北新区, and suggest clinical interventions based on FIGO and ADA 2024 literature.",
+    "query_zh": "将患者REAL-302821的CGM（连续血糖监测）MAGE（平均血糖波动幅度）和CV（变异系数）指标与江北新区PM2.5暴露>50 µg/m³的妊娠期糖尿病队列均值进行比较，并基于FIGO指南和ADA 2024指南文献提出临床干预建议。",
+    "claims": [
+      {"claim_id": "Q11-C1", "text": "Given the lack of specific targets for GDM, focus on maintaining stable glucose levels", "text_zh": "鉴于妊娠期糖尿病尚缺乏特异性目标值，应重点维持血糖稳定"},
+      {"claim_id": "Q11-C2", "text": "According to FIGO and ADA 2024 guidelines, consider intensifying glycemic management with more frequent insulin adjustments, dietary modifications focusing on low-GI foods, and increased physical activity", "text_zh": "根据FIGO指南和ADA 2024指南，建议加强血糖管理，包括增加胰岛素(insulin)剂量调整频次、以低升糖指数（低GI）食物为重点的膳食调整，以及适当增加体力活动"},
+      {"claim_id": "Q11-C3", "text": "If MAGE and CV are higher than the cohort average, consider adjusting insulin dosages or meal plans", "text_zh": "若MAGE（平均血糖波动幅度）和CV（变异系数）高于队列均值，应考虑调整胰岛素(insulin)剂量或膳食方案"},
+      {"claim_id": "Q11-C4", "text": "Based on FIGO and ADA 2024 guidelines, individualize treatment, ensuring CGM wear time is ≥14 days and active ≥70% of the time", "text_zh": "根据FIGO指南和ADA 2024指南，实施个体化治疗方案，确保CGM（连续血糖监测）佩戴时间≥14天且有效使用时间≥70%"},
+      {"claim_id": "Q11-C5", "text": "Monitor for signs of insulin resistance and assess for potential environmental factors contributing to poor control", "text_zh": "监测胰岛素抵抗迹象，评估可能影响血糖控制不良的环境因素"}
+    ]
+  },
+  {
+    "eval_id": 12,
+    "query_type": "5-hop",
+    "query": "Compare the CGM MAGE and CV metrics of patient REAL-287269 against the cohort average for GDM patients exposed to >50 µg/m³ PM2.5 in 鼓楼区, and suggest clinical interventions based on FIGO and ADA 2024 literature.",
+    "query_zh": "将患者REAL-287269的CGM（连续血糖监测）MAGE（平均血糖波动幅度）和CV（变异系数）指标与鼓楼区PM2.5暴露>50 µg/m³的妊娠期糖尿病队列均值进行比较，并基于FIGO指南和ADA 2024指南文献提出临床干预建议。",
+    "claims": [
+      {"claim_id": "Q12-C1", "text": "According to FIGO and ADA 2024 guidelines, clinical interventions should include:", "text_zh": "根据FIGO指南和ADA 2024指南，临床干预措施应包括："},
+      {"claim_id": "Q12-C2", "text": "Consult FIGO and ADA 2024 guidelines for further individualized recommendations", "text_zh": "参考FIGO指南和ADA 2024指南获取进一步的个体化建议"},
+      {"claim_id": "Q12-C3", "text": "If MAGE and CV are higher than the cohort average, consider intensifying insulin therapy or adjusting diet and exercise", "text_zh": "若MAGE（平均血糖波动幅度）和CV（变异系数）高于队列均值，应考虑加强胰岛素(insulin)治疗或调整饮食和运动方案"},
+      {"claim_id": "Q12-C4", "text": "Tight Glycemic Control: Consider more frequent insulin adjustments or the use of rapid-acting insulin analogs", "text_zh": "严格血糖控制：考虑更频繁地调整胰岛素(insulin)剂量或使用速效胰岛素类似物"},
+      {"claim_id": "Q12-C5", "text": "Regular CGM monitoring and remote analysis can guide these adjustments", "text_zh": "定期CGM（连续血糖监测）监测和远程数据分析可指导上述方案调整"}
+    ]
+  },
+  {
+    "eval_id": 13,
+    "query_type": "1-hop",
+    "query": "What was the fasting glucose level of patient REAL-104245 at their first antenatal visit?",
+    "query_zh": "患者REAL-104245首次产检时的空腹血糖水平是多少？",
+    "claims": [
+      {"claim_id": "Q13-C1", "text": "In general, a fasting glucose level of 92 mg/dL or higher is considered indicative of gestational diabetes mellitus (GDM) according to the American Diabetes Association criteria", "text_zh": "一般而言，根据美国糖尿病协会的诊断标准，空腹血糖≥92 mg/dL被认为提示妊娠期糖尿病（GDM）"},
+      {"claim_id": "Q13-C2", "text": "Specific patient data is not available, including the fasting glucose level of patient REAL-104245 at their first antenatal visit", "text_zh": "特定患者数据不可用，包括患者REAL-104245首次产检时的空腹血糖水平"},
+      {"claim_id": "Q13-C3", "text": "Current evidence and guidelines do not contain specific information about patient REAL-104245's fasting glucose level at their first antenatal visit", "text_zh": "现有临床证据和指南中未包含患者REAL-104245首次产检时空腹血糖的具体信息"},
+      {"claim_id": "Q13-C4", "text": "It is not possible to determine a fasting glucose level for this patient based on available evidence", "text_zh": "基于现有信息，无法确定该患者的空腹血糖数值"}
+    ]
+  },
+  {
+    "eval_id": 14,
+    "query_type": "3-hop",
+    "query": "For patient REAL-200529 in 建邺区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于建邺区的患者REAL-200529，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "claims": [
+      {"claim_id": "Q14-C1", "text": "Current evidence does not include specific data on the district-average fasting glucose levels for GDM patients with PM2.5 > 50 µg/m³ in 建邺区", "text_zh": "现有证据未包含建邺区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者区域平均空腹血糖的具体数据"},
+      {"claim_id": "Q14-C2", "text": "According to clinical guidelines, the target fasting glucose level for GDM patients is <95 mg/dL (<5.3 mmol/L)", "text_zh": "根据临床指南，妊娠期糖尿病患者的空腹血糖目标值为<95 mg/dL（<5.3 mmol/L）"},
+      {"claim_id": "Q14-C3", "text": "Typically, exposure to higher PM2.5 levels has been associated with increased insulin resistance and higher glucose levels in GDM patients", "text_zh": "通常较高的PM2.5暴露水平与妊娠期糖尿病患者胰岛素抵抗增强和血糖升高相关"},
+      {"claim_id": "Q14-C4", "text": "If patient REAL-200529's fasting glucose is above the standard threshold (≥92 mg/dL), it may indicate a need for more stringent monitoring or intervention, especially considering the potential environmental impact", "text_zh": "若患者REAL-200529的空腹血糖超过标准阈值（≥92 mg/dL），则可能需要更严格的监测或干预，尤其需考虑潜在的环境影响因素"},
+      {"claim_id": "Q14-C5", "text": "Ensure the patient's fasting glucose remains below 95 mg/dL, aligning with standard GDM management goals", "text_zh": "应确保患者空腹血糖控制在95 mg/dL以下，符合妊娠期糖尿病的标准管理目标"}
+    ]
+  },
+  {
+    "eval_id": 15,
+    "query_type": "1-hop",
+    "query": "What is the average PM2.5 exposure on the visit date for patient REAL-136023?",
+    "query_zh": "患者REAL-136023就诊当日的平均PM2.5暴露水平是多少？",
+    "claims": [
+      {"claim_id": "Q15-C1", "text": "PM2.5 exposure may have adverse effects on patients with gestational diabetes mellitus", "text_zh": "PM2.5暴露可能对妊娠期糖尿病患者产生不良影响"},
+      {"claim_id": "Q15-C2", "text": "It is not possible to determine an answer to the question based on available evidence", "text_zh": "无法回答该问题"},
+      {"claim_id": "Q15-C3", "text": "Specific patient data is not available, including environmental exposure details such as PM2.5 levels for patient REAL-136023", "text_zh": "特定患者数据不可用，包括患者REAL-136023的PM2.5暴露水平等环境暴露信息"},
+      {"claim_id": "Q15-C4", "text": "Additional environmental health records or air quality data specific to the patient's location and visit date would be required to determine the average PM2.5 exposure", "text_zh": "需获取该患者所在地点和就诊日期的环境健康记录或空气质量数据，方可确定平均PM2.5暴露水平"},
+      {"claim_id": "Q15-C5", "text": "Current evidence and guidelines do not contain information about PM2.5 exposure levels for patient REAL-136023", "text_zh": "现有临床证据和指南中未包含患者REAL-136023的PM2.5暴露水平信息"}
+    ]
+  }
+];
+
+// ===== App state =====
+const STORAGE_KEY = 'gdm-claims-eval-v3';
+let state = {
+  evaluator: '',
+  currentQuestion: 0,
+  ratings: {} // { "Q1-C1": "correct", ... }
+};
+
+// ===== DOM refs =====
+const $ = id => document.getElementById(id);
+
+const screenWelcome = $('screen-welcome');
+const screenCalibration = $('screen-calibration');
+const screenQuestion = $('screen-question');
+const screenComplete = $('screen-complete');
+
+const evaluatorInput = $('evaluator-name');
+const btnStart = $('btn-start');
+const btnStartEval = $('btn-start-eval');
+const btnPrev = $('btn-prev');
+const btnNext = $('btn-next');
+const btnCopy = $('btn-copy');
+const btnDownload = $('btn-download');
+
+const progressLabel = $('progress-label');
+const progressFill = $('progress-fill');
+const queryBadge = $('query-badge');
+const queryText = $('query-text');
+const claimsContainer = $('claims-container');
+const criteriaToggle = $('criteria-toggle');
+const criteriaBody = $('criteria-body');
+const summaryBody = $('summary-body');
+const toast = $('toast');
+
+// ===== Helpers =====
+function showScreen(screen) {
+  [screenWelcome, screenCalibration, screenQuestion, screenComplete].forEach(s => s.classList.remove('active'));
+  screen.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.evaluator) {
+        state = parsed;
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+function getTotalClaims() {
+  let total = 0;
+  QUESTIONS.forEach(q => total += q.claims.length);
+  return total;
+}
+
+function getBadgeClass(queryType) {
+  if (queryType.includes('1')) return 'badge-1hop';
+  if (queryType.includes('3')) return 'badge-3hop';
+  if (queryType.includes('5')) return 'badge-5hop';
+  return 'badge-3hop';
+}
+
+function allClaimsRatedForQuestion(qIndex) {
+  const q = QUESTIONS[qIndex];
+  return q.claims.every(c => state.ratings[c.claim_id]);
+}
+
+// ===== Render question =====
+function renderQuestion(qIndex) {
+  const q = QUESTIONS[qIndex];
+
+  // Progress
+  progressLabel.textContent = `问题 ${qIndex + 1}/15`;
+  progressFill.style.width = `${((qIndex + 1) / 15) * 100}%`;
+
+  // Query card (bilingual: Chinese primary, English reference)
+  queryBadge.textContent = q.query_type;
+  queryBadge.className = 'query-type-badge ' + getBadgeClass(q.query_type);
+  queryText.innerHTML = (q.query_zh ? '<div class="query-zh">' + escapeHtml(q.query_zh) + '</div>' : '') +
+    '<div class="query-en">' + escapeHtml(q.query) + '</div>';
+
+  // Claims
+  claimsContainer.innerHTML = '';
+  q.claims.forEach((claim, ci) => {
+    const currentRating = state.ratings[claim.claim_id] || '';
+
+    const card = document.createElement('div');
+    card.className = 'claim-card' + (currentRating ? ` rated-${currentRating}` : '');
+    card.id = `claim-card-${claim.claim_id}`;
+
+    const header = document.createElement('div');
+    header.className = 'claim-header';
+    header.innerHTML = `
+      <div class="claim-id">陈述 ${ci + 1}</div>
+      <div class="claim-text">` +
+        (claim.text_zh ? '<div class="claim-zh">' + escapeHtml(claim.text_zh) + '</div>' : '') +
+        '<div class="claim-en">' + escapeHtml(claim.text) + '</div>' +
+      `</div>
+    `;
+    card.appendChild(header);
+
+    const buttons = document.createElement('div');
+    buttons.className = 'claim-buttons';
+
+    const ratingOptions = [
+      { key: 'correct', icon: '&#10003;', label: '正确' },
+      { key: 'partially_correct', icon: '&#9651;', label: '部分正确' },
+      { key: 'incorrect', icon: '&#10007;', label: '不正确' },
+      { key: 'unverifiable', icon: '?', label: '无法验证' }
+    ];
+
+    ratingOptions.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'rating-btn' + (currentRating === opt.key ? ` sel-${opt.key}` : '');
+      btn.innerHTML = `<span class="icon">${opt.icon}</span> ${opt.label}`;
+      btn.addEventListener('click', () => {
+        setRating(claim.claim_id, opt.key, card, buttons);
+      });
+      buttons.appendChild(btn);
+    });
+
+    card.appendChild(buttons);
+    claimsContainer.appendChild(card);
+  });
+
+  // Nav buttons
+  btnPrev.style.display = qIndex === 0 ? 'none' : '';
+  updateNextButton(qIndex);
+}
+
+function setRating(claimId, rating, card, buttonsContainer) {
+  state.ratings[claimId] = rating;
+  saveState();
+
+  // Update card border
+  card.className = 'claim-card rated-' + rating;
+
+  // Update button selection
+  const btns = buttonsContainer.querySelectorAll('.rating-btn');
+  const keys = ['correct', 'partially_correct', 'incorrect', 'unverifiable'];
+  btns.forEach((btn, i) => {
+    btn.className = 'rating-btn' + (keys[i] === rating ? ` sel-${keys[i]}` : '');
+  });
+
+  updateNextButton(state.currentQuestion);
+}
+
+function updateNextButton(qIndex) {
+  const allRated = allClaimsRatedForQuestion(qIndex);
+  btnNext.disabled = !allRated;
+  btnNext.textContent = qIndex === 14 ? '完成评估' : '下一题';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ===== Build output JSON =====
+function buildOutput() {
+  const evaluations = QUESTIONS.map(q => ({
+    eval_id: q.eval_id,
+    query_type: q.query_type,
+    claims: q.claims.map(c => ({
+      claim_id: c.claim_id,
+      rating: state.ratings[c.claim_id] || ''
+    }))
+  }));
+
+  return {
+    meta: {
+      evaluator: state.evaluator,
+      timestamp: new Date().toISOString(),
+      version: 'v3-claims',
+      total_claims: getTotalClaims(),
+      total_questions: 15
+    },
+    evaluations
+  };
+}
+
+function showCompletion() {
+  // Count ratings
+  const counts = { correct: 0, partially_correct: 0, incorrect: 0, unverifiable: 0 };
+  Object.values(state.ratings).forEach(r => {
+    if (counts.hasOwnProperty(r)) counts[r]++;
+  });
+
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  summaryBody.innerHTML = `
+    <tr><td>总陈述数</td><td>${total}</td></tr>
+    <tr><td style="color:var(--green)">&#10003; 正确</td><td>${counts.correct}</td></tr>
+    <tr><td style="color:var(--yellow)">&#9651; 部分正确</td><td>${counts.partially_correct}</td></tr>
+    <tr><td style="color:var(--red)">&#10007; 不正确</td><td>${counts.incorrect}</td></tr>
+    <tr><td style="color:var(--gray)">? 无法验证</td><td>${counts.unverifiable}</td></tr>
+  `;
+
+  showScreen(screenComplete);
+}
+
+// ===== Event listeners =====
+
+// Welcome
+evaluatorInput.addEventListener('input', () => {
+  btnStart.disabled = !evaluatorInput.value.trim();
+});
+
+btnStart.addEventListener('click', () => {
+  state.evaluator = evaluatorInput.value.trim();
+  saveState();
+  showScreen(screenCalibration);
+});
+
+// Calibration
+btnStartEval.addEventListener('click', () => {
+  state.currentQuestion = 0;
+  saveState();
+  renderQuestion(0);
+  showScreen(screenQuestion);
+});
+
+// Criteria toggle
+criteriaToggle.addEventListener('click', () => {
+  criteriaToggle.classList.toggle('open');
+  criteriaBody.classList.toggle('open');
+});
+
+// Navigation
+btnPrev.addEventListener('click', () => {
+  if (state.currentQuestion > 0) {
+    state.currentQuestion--;
+    saveState();
+    renderQuestion(state.currentQuestion);
+    window.scrollTo(0, 0);
+  }
+});
+
+btnNext.addEventListener('click', () => {
+  if (!allClaimsRatedForQuestion(state.currentQuestion)) return;
+
+  if (state.currentQuestion < 14) {
+    state.currentQuestion++;
+    saveState();
+    renderQuestion(state.currentQuestion);
+    window.scrollTo(0, 0);
+  } else {
+    // Complete
+    saveState();
+    showCompletion();
+  }
+});
+
+// Copy
+btnCopy.addEventListener('click', () => {
+  const output = JSON.stringify(buildOutput(), null, 2);
+  navigator.clipboard.writeText(output).then(() => {
+    showToast('已复制到剪贴板');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = output;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('已复制到剪贴板');
+  });
+});
+
+// Download
+btnDownload.addEventListener('click', () => {
+  const output = buildOutput();
+  const filename = `gdm-claims-eval-${state.evaluator}-${new Date().toISOString().slice(0,10)}.json`;
+  const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('文件已下载');
+});
+
+// ===== Init: restore state =====
+(function init() {
+  if (loadState()) {
+    evaluatorInput.value = state.evaluator;
+    btnStart.disabled = !state.evaluator;
+
+    // Check if evaluation is complete
+    const totalClaims = getTotalClaims();
+    const ratedCount = Object.keys(state.ratings).length;
+
+    if (ratedCount === totalClaims) {
+      // All done, show completion
+      showCompletion();
+    } else if (ratedCount > 0) {
+      // In progress, resume at current question
+      renderQuestion(state.currentQuestion);
+      showScreen(screenQuestion);
+    }
+    // Otherwise show welcome with prefilled name
+  }
+})();
+</script>
+</body>
+</html>
