@@ -533,7 +533,7 @@ body {
   z-index: 100;
 }
 
-.nav-bar .btn {
+.nav-bar > .btn {
   flex: 1;
   max-width: 300px;
   border-radius: 12px;
@@ -578,6 +578,7 @@ body {
 
 .cal-example.cal-correct { border-left-color: var(--green-border); }
 .cal-example.cal-partial { border-left-color: var(--yellow-border); }
+.cal-example.cal-incorrect { border-left-color: var(--red-border); }
 .cal-example.cal-unverifiable { border-left-color: var(--gray-border); }
 
 .cal-example .cal-claim {
@@ -770,11 +771,12 @@ body {
       <h1>GDM临床决策支持系统</h1>
       <p class="subtitle">临床陈述准确性验证</p>
       <div class="desc">
-        我们从两个AI系统的回答中提取了临床陈述，请您逐条判断其准确性。每个问题包含4-5条陈述，共15个问题，约10-15分钟可完成。
+        我们从两个AI系统的回答中提取了临床陈述，请您逐条判断其准确性。每个问题包含4-5条陈述，共15个问题，约15-20分钟可完成。
       </div>
       <div class="input-group">
         <label for="evaluator-name">评估者姓名 *</label>
-        <input type="text" id="evaluator-name" placeholder="请输入您的姓名" autocomplete="name">
+        <input type="text" id="evaluator-name" placeholder="例：张医生" autocomplete="name">
+        <div style="font-size:0.78rem; color:var(--text-secondary); margin-top:6px;">仅用于区分不同评估者的结果，不会公开发表</div>
       </div>
       <button class="btn btn-primary btn-full" id="btn-start" disabled>开始评估</button>
     </div>
@@ -786,7 +788,7 @@ body {
   <div class="container">
     <div class="calibration-card">
       <h2>评分校准示例</h2>
-      <p>在正式评估前，请先了解四种评分的含义。以下是三条示例陈述及其评分：</p>
+      <p>在正式评估前，请先了解四种评分的含义。以下是四条示例陈述及其评分：</p>
 
       <div class="cal-example cal-correct">
         <div class="cal-claim">
@@ -814,8 +816,18 @@ body {
         <div class="cal-verdict" style="color:var(--gray);">? 无法验证</div>
         <div class="cal-reason">引用了具体期刊但在当前上下文中无法核实来源</div>
       </div>
+
+      <div class="cal-example cal-incorrect">
+        <div class="cal-claim">
+          <div class="claim-zh">"妊娠期糖尿病患者的空腹血糖管理目标为80-130 mg/dL（4.4-7.2 mmol/L）"</div>
+          <div class="claim-en">"The fasting glucose management target for GDM patients is 80-130 mg/dL (4.4-7.2 mmol/L)"</div>
+        </div>
+        <div class="cal-verdict" style="color:var(--red);">&#10007; 不正确</div>
+        <div class="cal-reason">80-130 mg/dL是一般2型糖尿病的目标范围。GDM的空腹血糖目标应为&lt;95 mg/dL（&lt;5.3 mmol/L），差异巨大，使用错误目标可能影响临床决策</div>
+      </div>
     </div>
 
+    <div style="font-size:0.82rem; color:var(--text-secondary); background:var(--primary-lighter); padding:12px 16px; border-radius:8px; margin-bottom:16px; line-height:1.65; border:1px solid rgba(79,70,229,0.08);">完成评估后，结果将自动发送给研究团队。您的评分数据仅用于学术研究。</div>
     <button class="btn btn-primary btn-full" id="btn-start-eval">我已了解，开始评估</button>
   </div>
 </div>
@@ -869,7 +881,10 @@ body {
   <!-- Nav bar -->
   <div class="nav-bar">
     <button class="btn btn-secondary" id="btn-prev">上一题</button>
-    <button class="btn btn-primary" id="btn-next" disabled>下一题</button>
+    <div style="flex:1;max-width:300px;text-align:center;">
+      <button class="btn btn-primary btn-full" id="btn-next" disabled>下一题</button>
+      <span id="btn-next-hint" style="display:block;font-size:0.72rem;color:var(--text-secondary);margin-top:4px;">请先完成所有陈述的评分</span>
+    </div>
   </div>
 </div>
 
@@ -939,7 +954,7 @@ const QUESTIONS = [
     "query_zh": "对于江北新区的患者REAL-012328，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
     "claims": [
       {"claim_id": "Q3-C1", "text": "The district average for such conditions might range from 90-110 mg/dL, depending on local health data", "text_zh": "根据当地卫生数据，该条件下的区域均值可能在90–110 mg/dL之间"},
-      {"claim_id": "Q3-C2", "text": "According to general guidelines, the target fasting glucose level for GDM patients is 80–130 mg/dL (4.4–7.2 mmol/L)", "text_zh": "根据通用指南，妊娠期糖尿病患者的空腹血糖目标值为80–130 mg/dL（4.4–7.2 mmol/L）"},
+      {"claim_id": "Q3-C2", "text": "According to general guidelines, the target fasting glucose level for GDM patients is <95 mg/dL (<5.3 mmol/L) per ADA recommendations", "text_zh": "根据ADA指南，妊娠期糖尿病患者的空腹血糖目标值为<95 mg/dL（<5.3 mmol/L）"},
       {"claim_id": "Q3-C3", "text": "Typically, in areas with high PM2.5 exposure (>50 µg/m³), GDM patients may exhibit slightly higher fasting glucose levels due to increased systemic inflammation and insulin resistance", "text_zh": "通常在PM2.5暴露较高的地区（>50 µg/m³），由于全身性炎症反应加重和胰岛素抵抗增强，妊娠期糖尿病患者的空腹血糖可能略有升高"},
       {"claim_id": "Q3-C4", "text": "Current evidence does not include specific data on fasting glucose levels for GDM patients in 江北新区 with PM2.5 > 50 µg/m³", "text_zh": "现有证据未包含江北新区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者空腹血糖的具体数据"},
       {"claim_id": "Q3-C5", "text": "Without district-specific data, we cannot directly compare patient REAL-012328's fasting glucose to the district average", "text_zh": "在缺乏区域特异性数据的情况下，无法将患者REAL-012328的空腹血糖与区域均值直接比较"}
@@ -1194,7 +1209,8 @@ function renderQuestion(qIndex) {
   progressFill.style.width = `${((qIndex + 1) / 15) * 100}%`;
 
   // Query card (bilingual: Chinese primary, English reference)
-  queryBadge.textContent = q.query_type;
+  const hopLabels = {'1-hop': '单因素查询', '3-hop': '多因素关联', '5-hop': '综合分析'};
+  queryBadge.textContent = hopLabels[q.query_type] || q.query_type;
   queryBadge.className = 'query-type-badge ' + getBadgeClass(q.query_type);
   queryText.innerHTML = (q.query_zh ? '<div class="query-zh">' + escapeHtml(q.query_zh) + '</div>' : '') +
     '<div class="query-en">' + escapeHtml(q.query) + '</div>';
@@ -1270,6 +1286,8 @@ function updateNextButton(qIndex) {
   const allRated = allClaimsRatedForQuestion(qIndex);
   btnNext.disabled = !allRated;
   btnNext.textContent = qIndex === 14 ? '完成评估' : '下一题';
+  const hint = document.getElementById('btn-next-hint');
+  if (hint) hint.style.display = allRated ? 'none' : 'block';
 }
 
 function escapeHtml(text) {
@@ -1280,11 +1298,12 @@ function escapeHtml(text) {
 
 // ===== Build output JSON =====
 // Session ID: unique per evaluator+browser, persists across page reloads
-function getSessionId() {
-  let sid = localStorage.getItem('gdm-eval-session-id');
+function getSessionId(evaluator) {
+  const key = 'gdm-eval-session-' + (evaluator || 'anon');
+  let sid = localStorage.getItem(key);
   if (!sid) {
     sid = 'S-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
-    localStorage.setItem('gdm-eval-session-id', sid);
+    localStorage.setItem(key, sid);
   }
   return sid;
 }
@@ -1311,7 +1330,7 @@ function buildOutput() {
   return {
     meta: {
       evaluator: state.evaluator,
-      session_id: getSessionId(),
+      session_id: getSessionId(state.evaluator),
       timestamp: new Date().toISOString(),
       version: 'v3-claims',
       total_claims: getTotalClaims(),
@@ -1337,17 +1356,21 @@ async function submitToNtfy(output) {
     else if (cl.rating === 'unverifiable') counts.u++;
   }));
 
-  const title = `[评估] ${output.meta.evaluator} | ${output.meta.session_id} | ✓${counts.c} △${counts.p} ✗${counts.i} ?${counts.u}`;
+  const summary = `[Eval] ${output.meta.evaluator} | ${output.meta.session_id} | C${counts.c} P${counts.p} I${counts.i} U${counts.u}`;
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
   try {
     const resp = await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
       method: 'POST',
       headers: {
-        'Title': title,
-        'Tags': 'clipboard,white_check_mark'
+        'Title': 'GDM-Eval-Result',
+        'Tags': 'clipboard'
       },
-      body: JSON.stringify(output)
+      body: JSON.stringify({...output, _summary: summary}),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     if (resp.ok) {
       return { success: true, method: 'ntfy' };
     } else {
@@ -1355,6 +1378,7 @@ async function submitToNtfy(output) {
       return { success: false, method: 'ntfy', error: resp.status };
     }
   } catch (e) {
+    clearTimeout(timeout);
     console.error('ntfy submission error:', e);
     return { success: false, method: 'ntfy', error: e.message };
   }
@@ -1390,7 +1414,7 @@ function showCompletion() {
   showScreen(screenComplete);
 
   // Auto-submit: only if not already submitted this session
-  const submitKey = 'gdm-eval-submitted-' + getSessionId();
+  const submitKey = 'gdm-eval-submitted-' + getSessionId(state.evaluator);
   if (!localStorage.getItem(submitKey)) {
     const output = buildOutput();
     submitWithRetry(output).then(result => {
@@ -1476,7 +1500,8 @@ btnCopy.addEventListener('click', () => {
 // Download
 btnDownload.addEventListener('click', () => {
   const output = buildOutput();
-  const filename = `gdm-claims-eval-${state.evaluator}-${new Date().toISOString().slice(0,10)}.json`;
+  const safeName = state.evaluator.replace(/[\/\\:*?"<>|]/g, '_');
+  const filename = `gdm-eval-${safeName}-${new Date().toISOString().slice(0,10)}.json`;
   const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
