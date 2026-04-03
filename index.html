@@ -924,8 +924,8 @@ const QUESTIONS = [
   {
     "eval_id": 1,
     "query_type": "3-hop",
-    "query": "For patient REAL-27082X living in 江北新区, how does their PM2.5 exposure on visit day correlate with their triglyceride level?",
-    "query_zh": "对于居住在江北新区的患者REAL-27082X，其就诊日PM2.5暴露水平与甘油三酯水平之间存在怎样的相关性？",
+    "query": "For patient REAL-27082X living in 城区A, how does their PM2.5 exposure on visit day correlate with their triglyceride level?",
+    "query_zh": "对于居住在城区A的患者REAL-27082X，其就诊日PM2.5暴露水平与甘油三酯水平之间存在怎样的相关性？",
     "claims": [
       {"claim_id": "Q1-C1", "text": "Monitoring these parameters over time could provide more definitive insights into the relationship for this particular patient", "text_zh": "对该患者进行长期随访监测上述参数，有助于更明确地揭示两者之间的关联"},
       {"claim_id": "Q1-C2", "text": "While this suggests that comprehensive management can improve lipid profiles, there is no specific data linking PM2.5 exposure to triglyceride levels in the context of gestational diabetes", "text_zh": "尽管综合管理可改善血脂谱，但目前缺乏将PM2.5暴露与妊娠期糖尿病患者甘油三酯水平直接关联的数据"},
@@ -937,8 +937,8 @@ const QUESTIONS = [
   {
     "eval_id": 2,
     "query_type": "3-hop",
-    "query": "For patient REAL-201306 living in 鼓楼区, how does their PM2.5 exposure on visit day correlate with their triglyceride level?",
-    "query_zh": "对于居住在鼓楼区的患者REAL-201306，其就诊日PM2.5暴露水平与甘油三酯水平之间存在怎样的相关性？",
+    "query": "For patient REAL-201306 living in 城区B, how does their PM2.5 exposure on visit day correlate with their triglyceride level?",
+    "query_zh": "对于居住在城区B的患者REAL-201306，其就诊日PM2.5暴露水平与甘油三酯水平之间存在怎样的相关性？",
     "claims": [
       {"claim_id": "Q2-C1", "text": "To establish a specific correlation for this patient, it would be necessary to analyze their individual data, considering both PM2.5 exposure levels and concurrent triglyceride measurements", "text_zh": "若要明确该患者的具体相关性，需结合其个体PM2.5暴露水平和同期甘油三酯检测数据进行分析"},
       {"claim_id": "Q2-C2", "text": "Studies suggest that short-term exposure to PM2.5 can lead to systemic inflammation and oxidative stress, which may affect lipid metabolism, potentially increasing triglyceride levels", "text_zh": "研究表明，短期PM2.5暴露可引发全身性炎症反应和氧化应激，进而影响脂质代谢，可能导致甘油三酯水平升高"},
@@ -950,21 +950,21 @@ const QUESTIONS = [
   {
     "eval_id": 3,
     "query_type": "3-hop",
-    "query": "For patient REAL-012328 in 江北新区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
-    "query_zh": "对于江北新区的患者REAL-012328，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "query": "For patient REAL-012328 in 城区A, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于城区A的患者REAL-012328，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
     "claims": [
       {"claim_id": "Q3-C1", "text": "The district average for such conditions might range from 90-110 mg/dL, depending on local health data", "text_zh": "根据当地卫生数据，该条件下的区域均值可能在90–110 mg/dL之间"},
       {"claim_id": "Q3-C2", "text": "According to general guidelines, the target fasting glucose level for GDM patients is <95 mg/dL (<5.3 mmol/L) per ADA recommendations", "text_zh": "根据ADA指南，妊娠期糖尿病患者的空腹血糖目标值为<95 mg/dL（<5.3 mmol/L）"},
       {"claim_id": "Q3-C3", "text": "Typically, in areas with high PM2.5 exposure (>50 µg/m³), GDM patients may exhibit slightly higher fasting glucose levels due to increased systemic inflammation and insulin resistance", "text_zh": "通常在PM2.5暴露较高的地区（>50 µg/m³），由于全身性炎症反应加重和胰岛素抵抗增强，妊娠期糖尿病患者的空腹血糖可能略有升高"},
-      {"claim_id": "Q3-C4", "text": "Current evidence does not include specific data on fasting glucose levels for GDM patients in 江北新区 with PM2.5 > 50 µg/m³", "text_zh": "现有证据未包含江北新区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者空腹血糖的具体数据"},
+      {"claim_id": "Q3-C4", "text": "Current evidence does not include specific data on fasting glucose levels for GDM patients in 城区A with PM2.5 > 50 µg/m³", "text_zh": "现有证据未包含城区APM2.5 > 50 µg/m³条件下妊娠期糖尿病患者空腹血糖的具体数据"},
       {"claim_id": "Q3-C5", "text": "Without district-specific data, we cannot directly compare patient REAL-012328's fasting glucose to the district average", "text_zh": "在缺乏区域特异性数据的情况下，无法将患者REAL-012328的空腹血糖与区域均值直接比较"}
     ]
   },
   {
     "eval_id": 4,
     "query_type": "3-hop",
-    "query": "For patient REAL-073629 in 鼓楼区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
-    "query_zh": "对于鼓楼区的患者REAL-073629，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "query": "For patient REAL-073629 in 城区B, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于城区B的患者REAL-073629，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
     "claims": [
       {"claim_id": "Q4-C1", "text": "The guidelines emphasize achieving these targets safely, adjusting if hypoglycemia is a concern", "text_zh": "指南强调应安全达标，当存在低血糖风险时需适当调整目标值"},
       {"claim_id": "Q4-C2", "text": "If such data is unavailable, consider using broader regional or national averages as a reference point, while noting the limitations of this approach", "text_zh": "若无此类数据，可考虑使用更大范围的区域或全国均值作为参考，但需注意该方法的局限性"},
@@ -1001,21 +1001,21 @@ const QUESTIONS = [
   {
     "eval_id": 7,
     "query_type": "3-hop",
-    "query": "How do the CGM glucose variability (CV) metrics of patient REAL-302248 compare to the GDM cohort mean for patients in 江北新区?",
-    "query_zh": "患者REAL-302248的CGM（连续血糖监测）血糖变异性CV（变异系数）指标与江北新区妊娠期糖尿病队列均值相比如何？",
+    "query": "How do the CGM glucose variability (CV) metrics of patient REAL-302248 compare to the GDM cohort mean for patients in 城区A?",
+    "query_zh": "患者REAL-302248的CGM（连续血糖监测）血糖变异性CV（变异系数）指标与城区A妊娠期糖尿病队列均值相比如何？",
     "claims": [
-      {"claim_id": "Q7-C1", "text": "Current evidence does not include specific CGM glucose variability (CV) metrics for patient REAL-302248 or the GDM cohort mean for patients in 江北新区", "text_zh": "现有证据未包含患者REAL-302248的CGM（连续血糖监测）血糖变异性CV（变异系数）指标或江北新区妊娠期糖尿病队列均值"},
+      {"claim_id": "Q7-C1", "text": "Current evidence does not include specific CGM glucose variability (CV) metrics for patient REAL-302248 or the GDM cohort mean for patients in 城区A", "text_zh": "现有证据未包含患者REAL-302248的CGM（连续血糖监测）血糖变异性CV（变异系数）指标或城区A妊娠期糖尿病队列均值"},
       {"claim_id": "Q7-C2", "text": "Based on general guidelines, CGM metrics such as mean glucose and glucose management indicator are crucial for managing GDM", "text_zh": "根据通用指南，CGM（连续血糖监测）指标如平均血糖和血糖管理指标对妊娠期糖尿病管理至关重要"},
       {"claim_id": "Q7-C3", "text": "If REAL-302248's CV is higher than the cohort mean, it suggests greater glucose variability, which may require closer monitoring or adjustment in management strategies", "text_zh": "若REAL-302248的CV（变异系数）高于队列均值，提示其血糖波动较大，可能需要加强监测或调整管理方案"},
       {"claim_id": "Q7-C4", "text": "A CV below the cohort mean indicates better glucose stability", "text_zh": "CV（变异系数）低于队列均值提示血糖控制更为稳定"},
-      {"claim_id": "Q7-C5", "text": "For a precise comparison, you would need the CV metric for REAL-302248 and the cohort mean from 江北新区", "text_zh": "如需精确比较，需获取REAL-302248的CV（变异系数）数据和江北新区队列均值"}
+      {"claim_id": "Q7-C5", "text": "For a precise comparison, you would need the CV metric for REAL-302248 and the cohort mean from 城区A", "text_zh": "如需精确比较，需获取REAL-302248的CV（变异系数）数据和城区A队列均值"}
     ]
   },
   {
     "eval_id": 8,
     "query_type": "5-hop",
-    "query": "Perform a multivariable clinical risk assessment for patient REAL-061465 incorporating PM2.5 exposure in 建邺区, pre-pregnancy BMI of 20.2, CGM variability CV, and biochemical lipid panel, then propose an evidence-based intervention per ADA 2024.",
-    "query_zh": "对患者REAL-061465进行多变量临床风险评估，综合考虑建邺区PM2.5暴露、孕前BMI 20.2、CGM（连续血糖监测）变异性CV（变异系数）及生化血脂谱，并依据ADA 2024指南提出循证干预方案。",
+    "query": "Perform a multivariable clinical risk assessment for patient REAL-061465 incorporating PM2.5 exposure in 城区D, pre-pregnancy BMI of 20.2, CGM variability CV, and biochemical lipid panel, then propose an evidence-based intervention per ADA 2024.",
+    "query_zh": "对患者REAL-061465进行多变量临床风险评估，综合考虑城区DPM2.5暴露、孕前BMI 20.2、CGM（连续血糖监测）变异性CV（变异系数）及生化血脂谱，并依据ADA 2024指南提出循证干预方案。",
     "claims": [
       {"claim_id": "Q8-C1", "text": "Monitor air quality and advise on reducing outdoor activities during high pollution days", "text_zh": "监测空气质量，建议在重度污染天气减少户外活动"},
       {"claim_id": "Q8-C2", "text": "PM2.5 Exposure: Elevated PM2.5 levels can increase insulin resistance and GDM risk", "text_zh": "PM2.5暴露：PM2.5水平升高可加重胰岛素抵抗，增加妊娠期糖尿病风险"},
@@ -1027,8 +1027,8 @@ const QUESTIONS = [
   {
     "eval_id": 9,
     "query_type": "5-hop",
-    "query": "Perform a multivariable clinical risk assessment for patient REAL-260482 incorporating PM2.5 exposure in 鼓楼区, pre-pregnancy BMI of 28.9, CGM variability CV, and biochemical lipid panel, then propose an evidence-based intervention per ADA 2024.",
-    "query_zh": "对患者REAL-260482进行多变量临床风险评估，综合考虑鼓楼区PM2.5暴露、孕前BMI 28.9、CGM（连续血糖监测）变异性CV（变异系数）及生化血脂谱，并依据ADA 2024指南提出循证干预方案。",
+    "query": "Perform a multivariable clinical risk assessment for patient REAL-260482 incorporating PM2.5 exposure in 城区B, pre-pregnancy BMI of 28.9, CGM variability CV, and biochemical lipid panel, then propose an evidence-based intervention per ADA 2024.",
+    "query_zh": "对患者REAL-260482进行多变量临床风险评估，综合考虑城区BPM2.5暴露、孕前BMI 28.9、CGM（连续血糖监测）变异性CV（变异系数）及生化血脂谱，并依据ADA 2024指南提出循证干预方案。",
     "claims": [
       {"claim_id": "Q9-C1", "text": "Follow ADA 2024 guidelines for comprehensive management", "text_zh": "遵循ADA 2024指南进行综合管理"},
       {"claim_id": "Q9-C2", "text": "Biochemical Lipid Panel: Abnormal lipid levels can further exacerbate insulin resistance", "text_zh": "生化血脂谱：血脂异常可进一步加重胰岛素抵抗"},
@@ -1040,20 +1040,20 @@ const QUESTIONS = [
   {
     "eval_id": 10,
     "query_type": "3-hop",
-    "query": "For patient REAL-244026 in 江宁区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
-    "query_zh": "对于江宁区的患者REAL-244026，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "query": "For patient REAL-244026 in 城区C, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于城区C的患者REAL-244026，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
     "claims": [
       {"claim_id": "Q10-C1", "text": "The guidelines emphasize achieving these targets safely, adjusting for individual risk of hypoglycemia", "text_zh": "指南强调应安全达标，并根据个体低血糖风险进行调整"},
       {"claim_id": "Q10-C2", "text": "If patient REAL-244026's fasting glucose is above this threshold, they may be at higher risk, especially considering the potential adverse effects of elevated PM2.5 exposure on glucose metabolism", "text_zh": "若患者REAL-244026的空腹血糖超过该阈值，则其风险可能更高，尤其需考虑PM2.5暴露升高对糖代谢的潜在不良影响"},
       {"claim_id": "Q10-C3", "text": "The specific comparison against the district-average for GDM patients with PM2.5 > 50 µg/m³ is not provided in available evidence", "text_zh": "现有证据中未提供与PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者区域均值的具体比较"},
-      {"claim_id": "Q10-C4", "text": "Typically, the American Diabetes Association (ADA) recommends a fasting plasma glucose level <92 mg/dL (5.1 mmol/L) for diagnosing GDM", "text_zh": "通常，美国糖尿病协会（ADA）推荐以空腹血浆葡萄糖<92 mg/dL（5.1 mmol/L）作为妊娠期糖尿病的诊断标准"}
+      {"claim_id": "Q10-C4", "text": "Typically, the American Diabetes Association (ADA) uses a fasting plasma glucose threshold of 92 mg/dL (5.1 mmol/L) or above as one criterion for diagnosing GDM", "text_zh": "通常，美国糖尿病协会（ADA）以空腹血浆葡萄糖≥92 mg/dL（5.1 mmol/L）作为妊娠期糖尿病的诊断标准之一"}
     ]
   },
   {
     "eval_id": 11,
     "query_type": "5-hop",
-    "query": "Compare the CGM MAGE and CV metrics of patient REAL-302821 against the cohort average for GDM patients exposed to >50 µg/m³ PM2.5 in 江北新区, and suggest clinical interventions based on FIGO and ADA 2024 literature.",
-    "query_zh": "将患者REAL-302821的CGM（连续血糖监测）MAGE（平均血糖波动幅度）和CV（变异系数）指标与江北新区PM2.5暴露>50 µg/m³的妊娠期糖尿病队列均值进行比较，并基于FIGO指南和ADA 2024指南文献提出临床干预建议。",
+    "query": "Compare the CGM MAGE and CV metrics of patient REAL-302821 against the cohort average for GDM patients exposed to >50 µg/m³ PM2.5 in 城区A, and suggest clinical interventions based on FIGO and ADA 2024 literature.",
+    "query_zh": "将患者REAL-302821的CGM（连续血糖监测）MAGE（平均血糖波动幅度）和CV（变异系数）指标与城区APM2.5暴露>50 µg/m³的妊娠期糖尿病队列均值进行比较，并基于FIGO指南和ADA 2024指南文献提出临床干预建议。",
     "claims": [
       {"claim_id": "Q11-C1", "text": "Given the lack of specific targets for GDM, focus on maintaining stable glucose levels", "text_zh": "鉴于妊娠期糖尿病尚缺乏特异性目标值，应重点维持血糖稳定"},
       {"claim_id": "Q11-C2", "text": "According to FIGO and ADA 2024 guidelines, consider intensifying glycemic management with more frequent insulin adjustments, dietary modifications focusing on low-GI foods, and increased physical activity", "text_zh": "根据FIGO指南和ADA 2024指南，建议加强血糖管理，包括增加胰岛素(insulin)剂量调整频次、以低升糖指数（低GI）食物为重点的膳食调整，以及适当增加体力活动"},
@@ -1065,8 +1065,8 @@ const QUESTIONS = [
   {
     "eval_id": 12,
     "query_type": "5-hop",
-    "query": "Compare the CGM MAGE and CV metrics of patient REAL-287269 against the cohort average for GDM patients exposed to >50 µg/m³ PM2.5 in 鼓楼区, and suggest clinical interventions based on FIGO and ADA 2024 literature.",
-    "query_zh": "将患者REAL-287269的CGM（连续血糖监测）MAGE（平均血糖波动幅度）和CV（变异系数）指标与鼓楼区PM2.5暴露>50 µg/m³的妊娠期糖尿病队列均值进行比较，并基于FIGO指南和ADA 2024指南文献提出临床干预建议。",
+    "query": "Compare the CGM MAGE and CV metrics of patient REAL-287269 against the cohort average for GDM patients exposed to >50 µg/m³ PM2.5 in 城区B, and suggest clinical interventions based on FIGO and ADA 2024 literature.",
+    "query_zh": "将患者REAL-287269的CGM（连续血糖监测）MAGE（平均血糖波动幅度）和CV（变异系数）指标与城区BPM2.5暴露>50 µg/m³的妊娠期糖尿病队列均值进行比较，并基于FIGO指南和ADA 2024指南文献提出临床干预建议。",
     "claims": [
       {"claim_id": "Q12-C1", "text": "According to FIGO and ADA 2024 guidelines, clinical interventions should include:", "text_zh": "根据FIGO指南和ADA 2024指南，临床干预措施应包括："},
       {"claim_id": "Q12-C2", "text": "Consult FIGO and ADA 2024 guidelines for further individualized recommendations", "text_zh": "参考FIGO指南和ADA 2024指南获取进一步的个体化建议"},
@@ -1090,10 +1090,10 @@ const QUESTIONS = [
   {
     "eval_id": 14,
     "query_type": "3-hop",
-    "query": "For patient REAL-200529 in 建邺区, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
-    "query_zh": "对于建邺区的患者REAL-200529，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
+    "query": "For patient REAL-200529 in 城区D, compare their fasting glucose against the district-average for GDM patients with PM2.5 > 50 µg/m³.",
+    "query_zh": "对于城区D的患者REAL-200529，将其空腹血糖与该区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者的区域均值进行比较。",
     "claims": [
-      {"claim_id": "Q14-C1", "text": "Current evidence does not include specific data on the district-average fasting glucose levels for GDM patients with PM2.5 > 50 µg/m³ in 建邺区", "text_zh": "现有证据未包含建邺区PM2.5 > 50 µg/m³条件下妊娠期糖尿病患者区域平均空腹血糖的具体数据"},
+      {"claim_id": "Q14-C1", "text": "Current evidence does not include specific data on the district-average fasting glucose levels for GDM patients with PM2.5 > 50 µg/m³ in 城区D", "text_zh": "现有证据未包含城区DPM2.5 > 50 µg/m³条件下妊娠期糖尿病患者区域平均空腹血糖的具体数据"},
       {"claim_id": "Q14-C2", "text": "According to clinical guidelines, the target fasting glucose level for GDM patients is <95 mg/dL (<5.3 mmol/L)", "text_zh": "根据临床指南，妊娠期糖尿病患者的空腹血糖目标值为<95 mg/dL（<5.3 mmol/L）"},
       {"claim_id": "Q14-C3", "text": "Typically, exposure to higher PM2.5 levels has been associated with increased insulin resistance and higher glucose levels in GDM patients", "text_zh": "通常较高的PM2.5暴露水平与妊娠期糖尿病患者胰岛素抵抗增强和血糖升高相关"},
       {"claim_id": "Q14-C4", "text": "If patient REAL-200529's fasting glucose is above the standard threshold (≥92 mg/dL), it may indicate a need for more stringent monitoring or intervention, especially considering the potential environmental impact", "text_zh": "若患者REAL-200529的空腹血糖超过标准阈值（≥92 mg/dL），则可能需要更严格的监测或干预，尤其需考虑潜在的环境影响因素"},
