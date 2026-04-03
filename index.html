@@ -1323,14 +1323,12 @@ function buildOutput() {
   };
 }
 
-// ===== Automatic data submission to GitHub Issues =====
-async function submitToGitHub(output) {
-  // Simple token assembly (split to avoid scraping)
-  const _p = ['github','_pat_','11BGXGMRI0','PvIfzO0RBzYu','_qp7YL0YkW7a','ksnjcpxryMXI','KIGvOrKyg1ZP','DB23uuWf7676','GBZ3fsy8Xat4'];
-  const _t = _p.join('');
-  const repo = 'Jie-Ni/gdm-eval';
+// ===== Automatic data submission via ntfy.sh =====
+// ntfy.sh: free, no-registration, works in mainland China
+// Topic is a secret URL — only PI knows it to retrieve results
+const NTFY_TOPIC = 'gdm-eval-jieni-secret-2026';
 
-  // Submission summary for issue title
+async function submitToNtfy(output) {
   const counts = {c:0, p:0, i:0, u:0};
   output.evaluations.forEach(q => q.claims.forEach(cl => {
     if (cl.rating === 'correct') counts.c++;
@@ -1339,40 +1337,37 @@ async function submitToGitHub(output) {
     else if (cl.rating === 'unverifiable') counts.u++;
   }));
 
-  const title = `[评估结果] ${output.meta.evaluator} | ${output.meta.session_id} | ✓${counts.c} △${counts.p} ✗${counts.i} ?${counts.u}`;
-  const body = '```json\n' + JSON.stringify(output, null, 2) + '\n```';
+  const title = `[评估] ${output.meta.evaluator} | ${output.meta.session_id} | ✓${counts.c} △${counts.p} ✗${counts.i} ?${counts.u}`;
 
   try {
-    const resp = await fetch(`https://api.github.com/repos/${repo}/issues`, {
+    const resp = await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
       method: 'POST',
       headers: {
-        'Authorization': `token ${_t}`,
-        'Accept': 'application/vnd.github+json',
-        'Content-Type': 'application/json'
+        'Title': title,
+        'Tags': 'clipboard,white_check_mark'
       },
-      body: JSON.stringify({ title, body, labels: ['eval-result'] })
+      body: JSON.stringify(output)
     });
     if (resp.ok) {
-      return { success: true, method: 'github' };
+      return { success: true, method: 'ntfy' };
     } else {
-      const err = await resp.text();
-      console.error('GitHub submission failed:', err);
-      return { success: false, method: 'github', error: err };
+      console.error('ntfy submission failed:', resp.status);
+      return { success: false, method: 'ntfy', error: resp.status };
     }
   } catch (e) {
-    console.error('GitHub submission error:', e);
-    return { success: false, method: 'github', error: e.message };
+    console.error('ntfy submission error:', e);
+    return { success: false, method: 'ntfy', error: e.message };
   }
 }
 
 // Retry wrapper: try up to 3 times
 async function submitWithRetry(output) {
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const result = await submitToGitHub(output);
+    const result = await submitToNtfy(output);
     if (result.success) return result;
     if (attempt < 3) await new Promise(r => setTimeout(r, 2000 * attempt));
   }
-  return { success: false, method: 'github', error: 'All 3 attempts failed' };
+  return { success: false, error: 'All 3 attempts failed' };
 }
 
 function showCompletion() {
