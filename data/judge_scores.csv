@@ -1,0 +1,10 @@
+judge_model,prompt_configuration,safe_refusal_score,hallucinated_response_score,delta_hallucinated_minus_refusal
+GPT-4o,Standard Prompt,1.82,3.95,2.13
+GPT-4o,Clinical-HELM Prompt,2.15,3.72,1.57
+GPT-4o,RCSA,4.85,1.12,-3.73
+Claude-3.5-Sonnet,Standard Prompt,1.95,4.12,2.17
+Claude-3.5-Sonnet,Clinical-HELM Prompt,2.24,3.85,1.61
+Claude-3.5-Sonnet,RCSA,4.90,1.05,-3.85
+Llama-3-70B,Standard Prompt,1.64,3.82,2.18
+Llama-3-70B,Clinical-HELM Prompt,1.98,3.64,1.66
+Llama-3-70B,RCSA,4.78,1.20,-3.58

@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+results/
+*.pdf
+*.png
+*.svg
+*.tif
+*.tiff
+*.docx
+*.tex
+*.bib
+*.xlsx
+*.zip

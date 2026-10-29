@@ -1,0 +1,4 @@
+clinical_domain,cases_n,kappa_without_rcsa,kappa_with_rcsa,p_value
+GDM,400,0.22,0.81,2.31e-12
+Cardiovascular,400,0.18,0.79,4.18e-11
+Oncology,400,0.15,0.76,8.95e-10
